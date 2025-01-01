@@ -41,14 +41,14 @@ const NewYearCard = () => {
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
     const result: string[] = [];
-
-    while (result.length < 4) {
+  
+    for (let i = 0; i < 4; i++) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
       const selectedWish = availableWishes[randomIndex];
       result.push(selectedWish);
       availableWishes.splice(randomIndex, 1);
     }
-
+  
     return result;
   }, [allWishes]);
 
