@@ -55,24 +55,40 @@ const NewYearCard = () => {
   }, [allWishes]);
 
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && 'share' in navigator) {
+    if (typeof navigator !== "undefined" && "share" in navigator) {
       setShareSupported(true);
     }
-    
+
     if (isOpen && !hasGeneratedWishes) {
       const timer = setTimeout(() => {
         setSelectedWishes(getRandomWishes());
         setShowMessage(true);
         setHasGeneratedWishes(true);
-        // เล่นเพลงอัตโนมัติเมื่อเปิดการ์ด
+
+        // แก้ไขการเล่นเพลง
         if (audioRef.current) {
-          audioRef.current.play().catch(console.log);
+          // พยายามเล่นเพลงและจัดการกับ error
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                console.log("Audio playing successfully");
+              })
+              .catch((error) => {
+                console.log("Audio play failed:", error);
+                // ถ้าเล่นไม่ได้ ลองเล่นอีกครั้งเมื่อผู้ใช้มีปฏิสัมพันธ์
+                const handleUserInteraction = () => {
+                  audioRef.current?.play();
+                  document.removeEventListener("click", handleUserInteraction);
+                };
+                document.addEventListener("click", handleUserInteraction);
+              });
+          }
         }
       }, 1000);
       return () => clearTimeout(timer);
     } else if (!isOpen) {
       setShowMessage(false);
-      // หยุดเพลงเมื่อปิดการ์ด
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -119,7 +135,15 @@ const NewYearCard = () => {
          ${isOpen ? "scale-100" : "scale-90 hover:scale-95"} mb-4`}
       >
         {/* Audio Element */}
-        <audio ref={audioRef} src="/happy-new-year.mp3" loop preload="auto" />
+        <audio
+          ref={audioRef}
+          src="/happy-new-year.mp3"
+          loop
+          preload="auto"
+          playsInline
+          muted={false}
+          crossOrigin="anonymous"
+        />
 
         {/* Sound Control Button */}
         {/* <button
