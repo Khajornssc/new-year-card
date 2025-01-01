@@ -5,8 +5,8 @@ import {
   Gift,
   RotateCcw,
   Share2,
-  Heart,
   Github,
+  Heart,
   Facebook,
 } from "lucide-react";
 import styles from "./NewYearCard.module.css";
@@ -15,10 +15,9 @@ const NewYearCard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [shareSupported, setShareSupported] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [selectedWishes, setSelectedWishes] = useState<string[]>([]);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [hasGeneratedWishes, setHasGeneratedWishes] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const allWishes = [
     "ขอให้มีความสุขตลอดปี 2025",
@@ -37,17 +36,18 @@ const NewYearCard = () => {
     "มีสติปัญญาที่เฉียบแหลม",
     "ทำการใดขอให้สำเร็จสมใจ",
   ];
-
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
     const selectedWishes: string[] = [];
+
     while (selectedWishes.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
       selectedWishes.push(availableWishes[randomIndex]);
       availableWishes.splice(randomIndex, 1);
     }
+
     return selectedWishes;
-  }, []);
+  }, [allWishes]);
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
@@ -59,31 +59,13 @@ const NewYearCard = () => {
         setSelectedWishes(getRandomWishes());
         setShowMessage(true);
         setHasGeneratedWishes(true);
-
-        // แก้ไขการเล่นเพลง
-        if (audioRef.current) {
-          // พยายามเล่นเพลงและจัดการกับ error
-          const playPromise = audioRef.current.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                console.log("Audio playing successfully");
-              })
-              .catch((error) => {
-                console.log("Audio play failed:", error);
-                // ถ้าเล่นไม่ได้ ลองเล่นอีกครั้งเมื่อผู้ใช้มีปฏิสัมพันธ์
-                const handleUserInteraction = () => {
-                  audioRef.current?.play();
-                  document.removeEventListener("click", handleUserInteraction);
-                };
-                document.addEventListener("click", handleUserInteraction);
-              });
-          }
-        }
+        // เริ่มเล่นเพลง
+        audioRef.current?.play().catch(console.log);
       }, 1000);
       return () => clearTimeout(timer);
     } else if (!isOpen) {
       setShowMessage(false);
+      // หยุดเพลงเมื่อปิดการ์ด
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -116,7 +98,7 @@ const NewYearCard = () => {
         className={`${
           styles.card_inner
         } relative w-96 bg-white rounded-xl shadow-2xl transform transition-all duration-700
-         ${isOpen ? "scale-100" : "scale-90 hover:scale-95"} mb-4`}
+          ${isOpen ? "scale-100" : "scale-90 hover:scale-95"} mb-4`}
       >
         {/* Audio Element */}
         <audio
@@ -125,23 +107,7 @@ const NewYearCard = () => {
           loop
           preload="auto"
           playsInline
-          muted={false}
-          crossOrigin="anonymous"
         />
-
-        {/* Sound Control Button */}
-        {/* <button
-          onClick={toggleSound}
-          className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-          aria-label={isPlaying ? "ปิดเสียง" : "เปิดเสียง"}
-        >
-          {isPlaying ? (
-            <Volume2 className="w-6 h-6 text-white" />
-          ) : (
-            <VolumeX className="w-6 h-6 text-white" />
-          )}
-        </button> */}
-
         {/* Card Front */}
         <div
           className={`${
