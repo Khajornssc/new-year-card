@@ -42,10 +42,9 @@ const NewYearCard = () => {
     const availableWishes = [...allWishes];
     const result: string[] = [];
   
-    for (let i = 0; i < 4; i++) {
+    while (result.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
-      const selectedWish = availableWishes[randomIndex];
-      result.push(selectedWish);
+      result.push(availableWishes[randomIndex]);
       availableWishes.splice(randomIndex, 1);
     }
   
