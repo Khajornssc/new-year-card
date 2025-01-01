@@ -1,5 +1,21 @@
 {
     "cSpell.words": [
-        "มีความสุข"
+      "Khajornsak",
+      "Chaipha",
+      "สวัสดี",
+      "ปีใหม่",
+      "การ์ด",
+      "อวยพร",
+      "ขอให้",
+      "ความสุข",
+      "แชร์",
+      "เปิด",
+      "ปิด",
+      "แตะ",
+      "เพื่อ"
+    ],
+    "cSpell.language": "en,th",
+    "cSpell.ignorePaths": [
+      "components/NewYearCard.tsx"
     ]
-}
+  }

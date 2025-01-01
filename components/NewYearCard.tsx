@@ -8,76 +8,184 @@ import {
   Github,
   Heart,
   Facebook,
+  Eye,
 } from "lucide-react";
 import styles from "./NewYearCard.module.css";
+import { database } from "./firebase";
+import { ref, onValue, get, set } from "firebase/database";
 
 const NewYearCard = () => {
+  // State Variables
   const [isOpen, setIsOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [shareSupported, setShareSupported] = useState(false);
   const [selectedWishes, setSelectedWishes] = useState<string[]>([]);
   const [hasGeneratedWishes, setHasGeneratedWishes] = useState(false);
+  const [viewCount, setViewCount] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-
   const allWishes = [
+    // คำอวยพรทั่วไป
     "ขอให้มีความสุขตลอดปี 2025",
     "สุขภาพแข็งแรง ร่ำรวยเงินทอง",
     "ประสบความสำเร็จในทุกด้าน",
     "พบเจอแต่สิ่งดีๆ ตลอดปีใหม่",
     "ขอให้โชคดีตลอดปี 2025",
+
+    // การงาน
     "มีความก้าวหน้าในหน้าที่การงาน",
+    "งานราบรื่น เงินทองไหลมาเทมา",
+    "เจริญก้าวหน้าในอาชีพการงาน",
+    "มีโอกาสดีๆ ในการทำงาน",
+    "ประสบความสำเร็จในธุรกิจการงาน",
+
+    // ครอบครัว
     "ครอบครัวอบอุ่น มีความสุข",
+    "ขอให้ครอบครัวมีแต่ความสุข",
+    "มีความรักที่อบอุ่นและมั่นคง",
+    "ครอบครัวสุขสันต์ อยู่เย็นเป็นสุข",
+    "มีความสุขกับคนที่คุณรัก",
+
+    // โชคลาภ
+    "โชคดีมีชัย รวยเงินรวยทอง",
+    "เฮงๆ รวยๆ ตลอดปี 2025",
+    "มีโชคลาภ เงินทองไหลมาเทมา",
+    "ขอให้ร่ำรวย มีเงินทองใช้ไม่ขาดมือ",
+    "โชคดี มีชัย ร่ำรวยเงินทอง",
+
+    // สุขภาพ
+    "สุขภาพแข็งแรง ปราศจากโรคภัย",
+    "ขอให้สุขภาพดี ไม่มีโรคภัยมาเบียดเบียน",
+    "แข็งแรงทั้งกายและใจ",
+    "มีสุขภาพที่ดีตลอดทั้งปี",
+    "สุขภาพแข็งแรง อายุยืนยาว",
+
+    // ความสำเร็จ
     "สมหวังในทุกสิ่งที่ปรารถนา",
-    "ขอให้มีแต่เรื่องดีๆ เข้ามา",
-    "มีกำลังใจที่เข้มแข็งตลอดไป",
-    "เจริญรุ่งเรืองในทุกๆ ด้าน",
-    "มีความรักที่สดใสและอบอุ่น",
-    "ขอให้พบเจอโอกาสดีๆ",
+    "ขอให้สมหวังในทุกการตัดสินใจ",
+    "ประสบความสำเร็จในทุกเป้าหมาย",
+    "ทำอะไรก็สำเร็จสมความปรารถนา",
+    "บรรลุเป้าหมายในทุกด้าน",
+
+    // จิตใจและความสุข
+    "มีความสุขกาย สบายใจ",
+    "จิตใจสงบ มีความสุขตลอดปี",
+    "มีรอยยิ้มและเสียงหัวเราะเสมอ",
+    "มีความสุขในทุกๆ วัน",
+    "จิตใจแจ่มใส มีความสุขตลอดไป",
+
+    // การเรียน
+    "เรียนเก่ง ประสบความสำเร็จ",
     "มีสติปัญญาที่เฉียบแหลม",
-    "ทำการใดขอให้สำเร็จสมใจ",
+    "การเรียนก้าวหน้า สมหวังดังตั้งใจ",
+    "เรียนจบตามที่ตั้งใจ",
+    "ขอให้เรียนสำเร็จดังที่ตั้งใจ",
+
+    // ความก้าวหน้า
+    "ก้าวหน้าในทุกด้านของชีวิต",
+    "พัฒนาตนเองอย่างต่อเนื่อง",
+    "ประสบความสำเร็จในทุกก้าวย่าง",
+    "มีความก้าวหน้าในทุกมิติของชีวิต",
+    "เจริญรุ่งเรืองในทุกๆ ด้าน",
+
+    // พลังใจ
+    "มีกำลังใจที่เข้มแข็งตลอดไป",
+    "มีพลังใจที่เข้มแข็งในการต่อสู้กับทุกอุปสรรค",
+    "มีกำลังใจที่ดีในการทำทุกสิ่ง",
+    "จิตใจเข้มแข็ง พร้อมรับมือทุกสถานการณ์",
+    "มีพลังใจที่เข้มแข็งตลอดไป",
   ];
+  // ฟังก์ชันสุ่มคำอวยพร
+  // Generate Random Wishes
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
     const selectedWishes: string[] = [];
-
     while (selectedWishes.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
       selectedWishes.push(availableWishes[randomIndex]);
       availableWishes.splice(randomIndex, 1);
     }
-
     return selectedWishes;
   }, [allWishes]);
 
-  useEffect(() => {
-    if (typeof navigator !== "undefined" && "share" in navigator) {
-      setShareSupported(true);
-    }
+  // Update View Count in Firebase
+  const updateViewCount = useCallback(async () => {
+    try {
+      const viewsRef = ref(database, "cardViews");
+      const snapshot = await get(viewsRef);
+      const currentViews = snapshot.exists() ? snapshot.val() : 0;
 
+      console.log("Current views before update:", currentViews);
+      await set(viewsRef, currentViews + 1);
+      console.log("Views updated successfully");
+    } catch (error) {
+      console.error("Error updating view count:", error);
+    }
+  }, []);
+
+  // Effects
+
+  // Update View Count When Card Opens
+  useEffect(() => {
+    if (isOpen && !sessionStorage.getItem("viewUpdated")) {
+      updateViewCount().then(() => {
+        sessionStorage.setItem("viewUpdated", "true");
+      });
+    }
+  }, [isOpen, updateViewCount]);
+
+  // Listen to Firebase View Count Changes
+  useEffect(() => {
+    const viewsRef = ref(database, "cardViews");
+    const unsubscribe = onValue(
+      viewsRef,
+      (snapshot) => {
+        const views = snapshot.exists() ? snapshot.val() : 0;
+        setViewCount(views);
+        console.log("Current views from Firebase:", views);
+      },
+      (error) => {
+        console.error("Error reading view count:", error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  // Generate Wishes and Play Audio When Card Opens
+  useEffect(() => {
     if (isOpen && !hasGeneratedWishes) {
       const timer = setTimeout(() => {
         setSelectedWishes(getRandomWishes());
         setShowMessage(true);
         setHasGeneratedWishes(true);
-        // เริ่มเล่นเพลง
-        audioRef.current?.play().catch(console.log);
+
+        audioRef.current
+          ?.play()
+          .then(() => console.log("Audio is playing"))
+          .catch((error) => {
+            console.error("Audio play failed:", error);
+            document.addEventListener("click", () => audioRef.current?.play(), {
+              once: true,
+            });
+          });
       }, 1000);
+
       return () => clearTimeout(timer);
     } else if (!isOpen) {
       setShowMessage(false);
-      // หยุดเพลงเมื่อปิดการ์ด
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
     }
-  }, [isOpen, getRandomWishes, hasGeneratedWishes]);
-
+  }, [isOpen, hasGeneratedWishes, getRandomWishes]);
+  // ฟังก์ชันปิดการ์ด
   const handleClose = () => {
     setIsOpen(false);
     setShowMessage(false);
   };
 
+  // ฟังก์ชันแชร์การ์ด
   const handleShare = async () => {
     try {
       if (typeof navigator !== "undefined" && "share" in navigator) {
@@ -174,7 +282,6 @@ const NewYearCard = () => {
           </div>
         </div>
       </div>
-
       {/* Footer Information */}
       <div className="flex items-center justify-center space-x-6 mt-4 text-white/80">
         <div className="flex items-center space-x-1">
@@ -204,6 +311,14 @@ const NewYearCard = () => {
             <Facebook className="w-4 h-4" />
             <span className="text-sm">Facebook</span>
           </a>
+        </div>
+        <div className="flex items-center space-x-1">
+          <Eye className="w-4 h-4 text-blue-400" />
+          <span className="text-sm">
+            {viewCount !== null && viewCount >= 0
+              ? `${viewCount.toLocaleString()} views`
+              : "Loading..."}
+          </span>
         </div>
       </div>
     </div>
