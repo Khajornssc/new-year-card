@@ -16,7 +16,8 @@ const NewYearCard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [shareSupported, setShareSupported] = useState(false);
-  const [randomWishes, setRandomWishes] = useState<string[]>([]);
+  const [selectedWishes, setSelectedWishes] = useState<string[]>([]);
+  const [hasGeneratedWishes, setHasGeneratedWishes] = useState(false);
 
   // รายการคำอวยพรทั้งหมด
   const allWishes = [
@@ -38,8 +39,8 @@ const NewYearCard = () => {
   ];
 
   const getRandomWishes = useCallback(() => {
-    const availableWishes = [...allWishes]; // ใช้ const แทน let
-    const result: string[] = []; // เปลี่ยนชื่อตัวแปรให้ชัดเจนขึ้น
+    const availableWishes = [...allWishes];
+    const result: string[] = [];
 
     while (result.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
@@ -56,16 +57,18 @@ const NewYearCard = () => {
       setShareSupported(true);
     }
 
-    if (isOpen) {
+    // สุ่มคำอวยพรเฉพาะครั้งแรกที่เปิดการ์ด
+    if (isOpen && !hasGeneratedWishes) {
       const timer = setTimeout(() => {
-        setRandomWishes(getRandomWishes());
+        setSelectedWishes(getRandomWishes());
         setShowMessage(true);
+        setHasGeneratedWishes(true);
       }, 1000);
       return () => clearTimeout(timer);
-    } else {
+    } else if (!isOpen) {
       setShowMessage(false);
     }
-  }, [isOpen, getRandomWishes]);
+  }, [isOpen, getRandomWishes, hasGeneratedWishes]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -146,7 +149,7 @@ const NewYearCard = () => {
               สวัสดีปีใหม่ 2025 🎊
             </h2>
             <div className="space-y-4">
-              {randomWishes.map((wish, index) => (
+              {selectedWishes.map((wish, index) => (
                 <div
                   key={index}
                   className={`flex items-center space-x-2 ${styles.animate_fade_in}`}
