@@ -1,6 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Star, Sparkles, Gift, RotateCcw, Share2, Code, Heart, Github } from 'lucide-react';
-import styles from './NewYearCard.module.css';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Star,
+  Sparkles,
+  Gift,
+  RotateCcw,
+  Share2,
+  Code,
+  Heart,
+  Github,
+  Facebook,
+} from "lucide-react";
+import styles from "./NewYearCard.module.css";
 
 const NewYearCard = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,25 +34,28 @@ const NewYearCard = () => {
     "มีความรักที่สดใสและอบอุ่น",
     "ขอให้พบเจอโอกาสดีๆ",
     "มีสติปัญญาที่เฉียบแหลม",
-    "ทำการใดขอให้สำเร็จสมใจ"
+    "ทำการใดขอให้สำเร็จสมใจ",
   ];
 
   const getRandomWishes = useCallback(() => {
-    const wishes = [...allWishes];
-    const selected = [];
-    for (let i = 0; i < 4; i++) {
-      const randomIndex = Math.floor(Math.random() * wishes.length);
-      selected.push(wishes[randomIndex]);
-      wishes.splice(randomIndex, 1);
+    const availableWishes = [...allWishes]; // ใช้ const แทน let
+    const result: string[] = []; // เปลี่ยนชื่อตัวแปรให้ชัดเจนขึ้น
+
+    while (result.length < 4) {
+      const randomIndex = Math.floor(Math.random() * availableWishes.length);
+      const selectedWish = availableWishes[randomIndex];
+      result.push(selectedWish);
+      availableWishes.splice(randomIndex, 1);
     }
-    return selected;
+
+    return result;
   }, [allWishes]);
 
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && navigator.share) {
+    if (typeof navigator !== "undefined" && "share" in navigator) {
       setShareSupported(true);
     }
-    
+
     if (isOpen) {
       const timer = setTimeout(() => {
         setRandomWishes(getRandomWishes());
@@ -61,54 +74,70 @@ const NewYearCard = () => {
 
   const handleShare = async () => {
     try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
+      if (typeof navigator !== "undefined" && "share" in navigator) {
         await navigator.share({
-          title: 'การ์ดอวยพรปีใหม่ 2025',
-          text: 'ส่งความสุขและคำอวยพรปีใหม่ 2025 ให้คุณ 🎊✨',
-          url: window.location.href
+          title: "การ์ดอวยพรปีใหม่ 2025",
+          text: "ส่งความสุขและคำอวยพรปีใหม่ 2025 ให้คุณ 🎊✨",
+          url: window.location.href,
         });
       }
     } catch (error) {
-      console.log('Error sharing:', error);
+      console.log("Error sharing:", error);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 p-4">
-      <div className={`${styles.card_inner} relative w-96 bg-white rounded-xl shadow-2xl transform transition-all duration-700
-          ${isOpen ? 'scale-100' : 'scale-90 hover:scale-95'} mb-4`}>
+      <div
+        className={`${
+          styles.card_inner
+        } relative w-96 bg-white rounded-xl shadow-2xl transform transition-all duration-700
+          ${isOpen ? "scale-100" : "scale-90 hover:scale-95"} mb-4`}
+      >
         {/* หน้าปก */}
-        <div className={`${styles.card_front} absolute w-full h-full bg-gradient-to-br from-red-500 to-pink-500 rounded-xl p-8
+        <div
+          className={`${
+            styles.card_front
+          } absolute w-full h-full bg-gradient-to-br from-red-500 to-pink-500 rounded-xl p-8
             transform origin-left transition-all duration-700 flex flex-col items-center justify-center
-            ${isOpen ? styles.rotate_y_180 : ''}`}
-          onClick={() => !isOpen && setIsOpen(true)}>
+            ${isOpen ? styles.rotate_y_180 : ""}`}
+          onClick={() => !isOpen && setIsOpen(true)}
+        >
           <Star className="w-16 h-16 text-yellow-300 animate-pulse" />
           <h1 className="text-3xl font-bold text-white mt-4 text-center">
             Happy New Year 2025
           </h1>
-          <p className="text-white mt-2 text-center">
-            ⭐ แตะเพื่อเปิดการ์ด ⭐
-          </p>
+          <p className="text-white mt-2 text-center">⭐ แตะเพื่อเปิดการ์ด ⭐</p>
         </div>
 
         {/* เนื้อหาด้านใน */}
         <div className="p-8">
-          <div className={`transform transition-all duration-1000 ${showMessage ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div
+            className={`transform transition-all duration-1000 ${
+              showMessage
+                ? "translate-y-0 opacity-100"
+                : "translate-y-10 opacity-0"
+            }`}
+          >
             <div className="flex justify-between items-center mb-6">
-              <Sparkles className={`w-12 h-12 text-yellow-500 ${styles.animate_spin_slow}`} />
+              <Sparkles
+                className={`w-12 h-12 text-yellow-500 ${styles.animate_spin_slow}`}
+              />
               <div className="flex gap-2">
                 {shareSupported && (
-                  <button 
+                  <button
                     onClick={handleShare}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="แชร์การ์ด">
+                    aria-label="แชร์การ์ด"
+                  >
                     <Share2 className="w-6 h-6 text-gray-600" />
                   </button>
                 )}
-                <button 
+                <button
                   onClick={handleClose}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  aria-label="ปิดการ์ด">
+                  aria-label="ปิดการ์ด"
+                >
                   <RotateCcw className="w-6 h-6 text-gray-600" />
                 </button>
               </div>
@@ -118,9 +147,11 @@ const NewYearCard = () => {
             </h2>
             <div className="space-y-4">
               {randomWishes.map((wish, index) => (
-                <div key={index} 
+                <div
+                  key={index}
                   className={`flex items-center space-x-2 ${styles.animate_fade_in}`}
-                  style={{ animationDelay: `${index * 0.3}s` }}>
+                  style={{ animationDelay: `${index * 0.3}s` }}
+                >
                   <Gift className="w-5 h-5 text-red-500 flex-shrink-0" />
                   <p className="text-gray-700">{wish}</p>
                 </div>
@@ -130,7 +161,7 @@ const NewYearCard = () => {
         </div>
       </div>
 
-      {/* ข้อมูลด้านล่างการ์ด */}
+      {/* เพิ่มส่วนนี้ก่อนปิด div นอกสุด */}
       <div className="flex items-center justify-center space-x-6 mt-4 text-white/80">
         <div className="flex items-center space-x-1">
           <Code className="w-4 h-4" />
@@ -140,15 +171,26 @@ const NewYearCard = () => {
           <Heart className="w-4 h-4 text-red-400" />
           <span className="text-sm">Made with ❤️ by Khajornsak Chaipha</span>
         </div>
-        <a 
-          href="https://github.com/Khajornssc/new-year-card" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="flex items-center space-x-1 hover:text-white transition-colors"
-        >
-          <Github className="w-4 h-4" />
-          <span className="text-sm">GitHub</span>
-        </a>
+        <div className="flex items-center space-x-4">
+          <a
+            href="https://github.com/Khajornssc/new-year-card"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 hover:text-white transition-colors"
+          >
+            <Github className="w-4 h-4" />
+            <span className="text-sm">GitHub</span>
+          </a>
+          <a
+            href="https://www.facebook.com/plugins/follow.php?href=https://www.facebook.com/wartdiy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 hover:text-white transition-colors group"
+          >
+            <Facebook className="w-4 h-4 group-hover:text-blue-400" />
+            <span className="text-sm">Follow me on Facebook</span>
+          </a>
+        </div>
       </div>
     </div>
   );
