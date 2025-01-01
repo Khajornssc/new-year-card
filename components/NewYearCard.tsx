@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo  } from "react";
 import {
   Star,
   Sparkles,
@@ -23,7 +23,8 @@ const NewYearCard = () => {
   const [hasGeneratedWishes, setHasGeneratedWishes] = useState(false);
   const [viewCount, setViewCount] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const allWishes = [
+  
+  const allWishes = useMemo(() => [
     // คำอวยพรทั่วไป
     "ขอให้มีความสุขตลอดปี 2025",
     "สุขภาพแข็งแรง ร่ำรวยเงินทอง",
@@ -93,9 +94,8 @@ const NewYearCard = () => {
     "มีกำลังใจที่ดีในการทำทุกสิ่ง",
     "จิตใจเข้มแข็ง พร้อมรับมือทุกสถานการณ์",
     "มีพลังใจที่เข้มแข็งตลอดไป",
-  ];
+  ], []);
   // ฟังก์ชันสุ่มคำอวยพร
-  // Generate Random Wishes
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
     const selectedWishes: string[] = [];
@@ -123,7 +123,11 @@ const NewYearCard = () => {
   }, []);
 
   // Effects
-
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      setShareSupported(true);  // ใช้งาน setShareSupported ที่นี่
+    }
+  }, []);
   // Update View Count When Card Opens
   useEffect(() => {
     if (isOpen && !sessionStorage.getItem("viewUpdated")) {
