@@ -5,9 +5,6 @@ import {
   Gift,
   RotateCcw,
   Share2,
-  Volume2,
-  VolumeX,
-  Code,
   Heart,
   Github,
   Facebook,
@@ -44,15 +41,13 @@ const NewYearCard = () => {
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
     const selectedWishes: string[] = [];
-
     while (selectedWishes.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
       selectedWishes.push(availableWishes[randomIndex]);
       availableWishes.splice(randomIndex, 1);
     }
-
     return selectedWishes;
-  }, [allWishes]);
+  }, []);
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
@@ -95,17 +90,6 @@ const NewYearCard = () => {
       }
     }
   }, [isOpen, getRandomWishes, hasGeneratedWishes]);
-
-  const toggleSound = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play().catch(console.log);
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
 
   const handleClose = () => {
     setIsOpen(false);
