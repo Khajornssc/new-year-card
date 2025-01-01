@@ -28,15 +28,15 @@ const NewYearCard = () => {
   ];
 
   const getRandomWishes = useCallback(() => {
-    let wishes = [...allWishes];
-    let selected = [];
+    const wishes = [...allWishes];
+    const selected = [];
     for (let i = 0; i < 4; i++) {
       const randomIndex = Math.floor(Math.random() * wishes.length);
       selected.push(wishes[randomIndex]);
       wishes.splice(randomIndex, 1);
     }
     return selected;
-  }, []);
+  }, [allWishes]);
 
   useEffect(() => {
     if (typeof navigator !== 'undefined' && navigator.share) {
