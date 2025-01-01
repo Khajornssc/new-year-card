@@ -39,6 +39,7 @@ const NewYearCard = () => {
   ];
 
   const getRandomWishes = useCallback(() => {
+    // เอาตัวแปรที่ไม่เคยถูกเปลี่ยนค่าออกจาก loop
     const availableWishes = [...allWishes];
     const result: string[] = [];
   
@@ -49,7 +50,7 @@ const NewYearCard = () => {
     }
   
     return result;
-  }, [allWishes]);
+  }, [allWishes]); 
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
