@@ -40,16 +40,16 @@ const NewYearCard = () => {
 
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
-    const result: string[] = [];
+    const selectedWishes: string[] = [];
   
-    while (result.length < 4) {
+    while (selectedWishes.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
-      result.push(availableWishes[randomIndex]);
+      selectedWishes.push(availableWishes[randomIndex]);
       availableWishes.splice(randomIndex, 1);
     }
   
-    return result;
-  }, [allWishes]);  
+    return selectedWishes;
+  }, [allWishes]);
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
