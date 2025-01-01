@@ -1,0 +1,43 @@
+@keyframes rotate-y-180 {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(-180deg); }
+}
+
+.rotate_y_180 {
+  animation: rotate-y-180 0.7s forwards;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+@keyframes fade-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.animate_fade_in {
+  animation: fade-in 0.5s forwards;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate_spin_slow {
+  animation: spin 3s linear infinite;
+}
+
+.card_front {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.card_inner {
+  perspective: 1000px;
+}
