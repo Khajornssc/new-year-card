@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Star,
   Sparkles,
   Gift,
   RotateCcw,
   Share2,
+  Volume2,
+  VolumeX,
   Code,
   Heart,
   Github,
@@ -16,10 +18,11 @@ const NewYearCard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [shareSupported, setShareSupported] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [selectedWishes, setSelectedWishes] = useState<string[]>([]);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [hasGeneratedWishes, setHasGeneratedWishes] = useState(false);
 
-  // รายการคำอวยพรทั้งหมด
   const allWishes = [
     "ขอให้มีความสุขตลอดปี 2025",
     "สุขภาพแข็งแรง ร่ำรวยเงินทอง",
@@ -41,33 +44,52 @@ const NewYearCard = () => {
   const getRandomWishes = useCallback(() => {
     const availableWishes = [...allWishes];
     const selectedWishes: string[] = [];
-  
+
     while (selectedWishes.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
       selectedWishes.push(availableWishes[randomIndex]);
       availableWishes.splice(randomIndex, 1);
     }
-  
+
     return selectedWishes;
   }, [allWishes]);
 
   useEffect(() => {
-    if (typeof navigator !== "undefined" && "share" in navigator) {
+    if (typeof navigator !== 'undefined' && 'share' in navigator) {
       setShareSupported(true);
     }
-
-    // สุ่มคำอวยพรเฉพาะครั้งแรกที่เปิดการ์ด
+    
     if (isOpen && !hasGeneratedWishes) {
       const timer = setTimeout(() => {
         setSelectedWishes(getRandomWishes());
         setShowMessage(true);
         setHasGeneratedWishes(true);
+        // เล่นเพลงอัตโนมัติเมื่อเปิดการ์ด
+        if (audioRef.current) {
+          audioRef.current.play().catch(console.log);
+        }
       }, 1000);
       return () => clearTimeout(timer);
     } else if (!isOpen) {
       setShowMessage(false);
+      // หยุดเพลงเมื่อปิดการ์ด
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
     }
   }, [isOpen, getRandomWishes, hasGeneratedWishes]);
+
+  const toggleSound = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(console.log);
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   const handleClose = () => {
     setIsOpen(false);
@@ -94,15 +116,31 @@ const NewYearCard = () => {
         className={`${
           styles.card_inner
         } relative w-96 bg-white rounded-xl shadow-2xl transform transition-all duration-700
-          ${isOpen ? "scale-100" : "scale-90 hover:scale-95"} mb-4`}
+         ${isOpen ? "scale-100" : "scale-90 hover:scale-95"} mb-4`}
       >
-        {/* หน้าปก */}
+        {/* Audio Element */}
+        <audio ref={audioRef} src="/happy-new-year.mp3" loop preload="auto" />
+
+        {/* Sound Control Button */}
+        {/* <button
+          onClick={toggleSound}
+          className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+          aria-label={isPlaying ? "ปิดเสียง" : "เปิดเสียง"}
+        >
+          {isPlaying ? (
+            <Volume2 className="w-6 h-6 text-white" />
+          ) : (
+            <VolumeX className="w-6 h-6 text-white" />
+          )}
+        </button> */}
+
+        {/* Card Front */}
         <div
           className={`${
             styles.card_front
           } absolute w-full h-full bg-gradient-to-br from-red-500 to-pink-500 rounded-xl p-8
-            transform origin-left transition-all duration-700 flex flex-col items-center justify-center
-            ${isOpen ? styles.rotate_y_180 : ""}`}
+           transform origin-left transition-all duration-700 flex flex-col items-center justify-center
+           ${isOpen ? styles.rotate_y_180 : ""}`}
           onClick={() => !isOpen && setIsOpen(true)}
         >
           <Star className="w-16 h-16 text-yellow-300 animate-pulse" />
@@ -112,7 +150,7 @@ const NewYearCard = () => {
           <p className="text-white mt-2 text-center">⭐ แตะเพื่อเปิดการ์ด ⭐</p>
         </div>
 
-        {/* เนื้อหาด้านใน */}
+        {/* Card Inside */}
         <div className="p-8">
           <div
             className={`transform transition-all duration-1000 ${
@@ -163,15 +201,15 @@ const NewYearCard = () => {
         </div>
       </div>
 
-      {/* เพิ่มส่วนนี้ก่อนปิด div นอกสุด */}
+      {/* Footer Information */}
       <div className="flex items-center justify-center space-x-6 mt-4 text-white/80">
         <div className="flex items-center space-x-1">
-          <Code className="w-4 h-4" />
-          <span className="text-sm">Developed with Next.js & React</span>
+          <Star className="w-4 h-4 text-yellow-300" />
+          <span className="text-sm">New Year Card 2025</span>
         </div>
         <div className="flex items-center space-x-1">
           <Heart className="w-4 h-4 text-red-400" />
-          <span className="text-sm">Made with ❤️ by Khajornsak Chaipha</span>
+          <span className="text-sm">Created by Khajornsak Chaipha</span>
         </div>
         <div className="flex items-center space-x-4">
           <a
@@ -184,13 +222,13 @@ const NewYearCard = () => {
             <span className="text-sm">GitHub</span>
           </a>
           <a
-            href="https://www.facebook.com/plugins/follow.php?href=https://www.facebook.com/wartdiy"
+            href="https://www.facebook.com/wartdiy"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1 hover:text-white transition-colors group"
+            className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
           >
-            <Facebook className="w-4 h-4 group-hover:text-blue-400" />
-            <span className="text-sm">Follow me on Facebook</span>
+            <Facebook className="w-4 h-4" />
+            <span className="text-sm">Facebook</span>
           </a>
         </div>
       </div>
