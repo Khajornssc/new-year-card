@@ -1,0 +1,126 @@
+[33mcommit 085d28132fc48be9006559b9fb9fcaf07996359c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Thu Jan 2 07:08:26 2025 +0700
+
+    fix: resolve typerscript errors and component structure
+
+[33mcommit c4a593b887dce0fc43ccb9e56616288373cd7195[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Thu Jan 2 06:50:33 2025 +0700
+
+    fix: resolve build errors - add useMemo import and fix eslint warnings
+
+[33mcommit ab957ab48e389787995a90554dc83f9de94d210f[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 22:58:29 2025 +0700
+
+    Update NewYearCard component, add Firebase integration, and update configurations
+
+[33mcommit b991c2998fddd59bec8cf7c8022e60706833a10c[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 17:36:17 2025 +0700
+
+    Remove unused state variables
+
+[33mcommit 64e212ad796365ee256b4c4a89c3b159db1c6fd4[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 17:29:52 2025 +0700
+
+    Fix ESLint errors and improve audio handling
+
+[33mcommit 6dfa0f96ab7b831b87070b933147ccc1045a25d5[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 15:00:35 2025 +0700
+
+    Fix audio autoplay issues
+
+[33mcommit 12743394c22b6bb538d457943a3161fe089c1692[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 13:46:27 2025 +0700
+
+    Update card features: Add auto-play music and fix favicon
+
+[33mcommit e1c5c7f4dafcf39d18666486e13c9e56defccbe9[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 13:11:49 2025 +0700
+
+    Fix ESLint issues in NewYearCard component
+
+[33mcommit 421a846876f0b270f1de3ae976f23c8a998f6d5f[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 13:08:29 2025 +0700
+
+    Fix ESLint issues and add proper configuration
+
+[33mcommit 869dc793c4679cb3450b4b800bcd2d0fb5fdb40b[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 13:03:01 2025 +0700
+
+    Fix ESLint issues in getRandomWishes function
+
+[33mcommit 52b768fa62d5044a07393dbe4ff8ae98003af381[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 13:00:50 2025 +0700
+
+    Update README in Thai and fix ESLint issues
+
+[33mcommit dd12a452bacfb2a068c23b1b328a48b3c497cc3b[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 12:53:16 2025 +0700
+
+    Fix ESLint issues
+
+[33mcommit 290f78449186b9ac4b850d2a1439473b3f49499f[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 12:52:33 2025 +0700
+
+    Add ESLint config
+
+[33mcommit ab0c46984fcd7da180c23bbd095d8bde32157844[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 12:49:50 2025 +0700
+
+    Update card features: Fixed wishes display and add social links
+
+[33mcommit 979f08dab9c4b2fd7b769b9a341f0535041facd6[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 10:59:41 2025 +0700
+
+    Fix ESLint issues with proper code structure
+
+[33mcommit 21ca99a98d349bd0802f6f01918aadf2074a01f0[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 10:25:43 2025 +0700
+
+    Add ESLint config to disable rules
+
+[33mcommit c811c3f38ead0ebb10542e3b8715afd95f7efa73[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 10:23:16 2025 +0700
+
+    Fix ESLint errors
+
+[33mcommit f26350b1f490d13d0856f6b7e6fcb97d16e61485[m
+Merge: ae90b77 e13e860
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 10:17:43 2025 +0700
+
+    Merge remote changes
+
+[33mcommit ae90b77f860755cde0a6f30d32807173edbfc5e3[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 10:14:22 2025 +0700
+
+    Initial commit: New Year Card project
+
+[33mcommit 10319c0d3ee79f87ca1de824237bc48dbd6cff0c[m
+Author: khajornssc <khajornssc@gmail.com>
+Date:   Wed Jan 1 08:48:42 2025 +0700
+
+    Initial commit from Create Next App
+
+[33mcommit e13e86021bbb782fd475cd7d0f52a47cdeead64f[m
+Author: Khajornsak <96009800+Khajornssc@users.noreply.github.com>
+Date:   Wed Jan 1 08:48:40 2025 +0700
+
+    Initial commit
