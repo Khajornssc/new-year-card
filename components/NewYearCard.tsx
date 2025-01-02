@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo  } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Star,
   Sparkles,
@@ -13,9 +13,79 @@ import {
 import styles from "./NewYearCard.module.css";
 import { database } from "./firebase";
 import { ref, onValue, get, set } from "firebase/database";
+const WISHES_LIST = [
+  // คำอวยพรทั่วไป
+  "ขอให้มีความสุขตลอดปี 2025",
+  "สุขภาพแข็งแรง ร่ำรวยเงินทอง",
+  "ประสบความสำเร็จในทุกด้าน",
+  "พบเจอแต่สิ่งดีๆ ตลอดปีใหม่",
+  "ขอให้โชคดีตลอดปี 2025",
 
+  // การงาน
+  "มีความก้าวหน้าในหน้าที่การงาน",
+  "งานราบรื่น เงินทองไหลมาเทมา",
+  "เจริญก้าวหน้าในอาชีพการงาน",
+  "มีโอกาสดีๆ ในการทำงาน",
+  "ประสบความสำเร็จในธุรกิจการงาน",
+
+  // ครอบครัว
+  "ครอบครัวอบอุ่น มีความสุข",
+  "ขอให้ครอบครัวมีแต่ความสุข",
+  "มีความรักที่อบอุ่นและมั่นคง",
+  "ครอบครัวสุขสันต์ อยู่เย็นเป็นสุข",
+  "มีความสุขกับคนที่คุณรัก",
+
+  // โชคลาภ
+  "โชคดีมีชัย รวยเงินรวยทอง",
+  "เฮงๆ รวยๆ ตลอดปี 2025",
+  "มีโชคลาภ เงินทองไหลมาเทมา",
+  "ขอให้ร่ำรวย มีเงินทองใช้ไม่ขาดมือ",
+  "โชคดี มีชัย ร่ำรวยเงินทอง",
+
+  // สุขภาพ
+  "สุขภาพแข็งแรง ปราศจากโรคภัย",
+  "ขอให้สุขภาพดี ไม่มีโรคภัยมาเบียดเบียน",
+  "แข็งแรงทั้งกายและใจ",
+  "มีสุขภาพที่ดีตลอดทั้งปี",
+  "สุขภาพแข็งแรง อายุยืนยาว",
+
+  // ความสำเร็จ
+  "สมหวังในทุกสิ่งที่ปรารถนา",
+  "ขอให้สมหวังในทุกการตัดสินใจ",
+  "ประสบความสำเร็จในทุกเป้าหมาย",
+  "ทำอะไรก็สำเร็จสมความปรารถนา",
+  "บรรลุเป้าหมายในทุกด้าน",
+
+  // จิตใจและความสุข
+  "มีความสุขกาย สบายใจ",
+  "จิตใจสงบ มีความสุขตลอดปี",
+  "มีรอยยิ้มและเสียงหัวเราะเสมอ",
+  "มีความสุขในทุกๆ วัน",
+  "จิตใจแจ่มใส มีความสุขตลอดไป",
+
+  // การเรียน
+  "เรียนเก่ง ประสบความสำเร็จ",
+  "มีสติปัญญาที่เฉียบแหลม",
+  "การเรียนก้าวหน้า สมหวังดังตั้งใจ",
+  "เรียนจบตามที่ตั้งใจ",
+  "ขอให้เรียนสำเร็จดังที่ตั้งใจ",
+
+  // ความก้าวหน้า
+  "ก้าวหน้าในทุกด้านของชีวิต",
+  "พัฒนาตนเองอย่างต่อเนื่อง",
+  "ประสบความสำเร็จในทุกก้าวย่าง",
+  "มีความก้าวหน้าในทุกมิติของชีวิต",
+  "เจริญรุ่งเรืองในทุกๆ ด้าน",
+
+  // พลังใจ
+  "มีกำลังใจที่เข้มแข็งตลอดไป",
+  "มีพลังใจที่เข้มแข็งในการต่อสู้กับทุกอุปสรรค",
+  "มีกำลังใจที่ดีในการทำทุกสิ่ง",
+  "จิตใจเข้มแข็ง พร้อมรับมือทุกสถานการณ์",
+  "มีพลังใจที่เข้มแข็งตลอดไป",
+] as const;
 const NewYearCard = () => {
-  // State Variables
+  // State declarations
   const [isOpen, setIsOpen] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [shareSupported, setShareSupported] = useState(false);
@@ -23,81 +93,10 @@ const NewYearCard = () => {
   const [hasGeneratedWishes, setHasGeneratedWishes] = useState(false);
   const [viewCount, setViewCount] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  
-  const allWishes = useMemo(() => [
-    // คำอวยพรทั่วไป
-    "ขอให้มีความสุขตลอดปี 2025",
-    "สุขภาพแข็งแรง ร่ำรวยเงินทอง",
-    "ประสบความสำเร็จในทุกด้าน",
-    "พบเจอแต่สิ่งดีๆ ตลอดปีใหม่",
-    "ขอให้โชคดีตลอดปี 2025",
 
-    // การงาน
-    "มีความก้าวหน้าในหน้าที่การงาน",
-    "งานราบรื่น เงินทองไหลมาเทมา",
-    "เจริญก้าวหน้าในอาชีพการงาน",
-    "มีโอกาสดีๆ ในการทำงาน",
-    "ประสบความสำเร็จในธุรกิจการงาน",
-
-    // ครอบครัว
-    "ครอบครัวอบอุ่น มีความสุข",
-    "ขอให้ครอบครัวมีแต่ความสุข",
-    "มีความรักที่อบอุ่นและมั่นคง",
-    "ครอบครัวสุขสันต์ อยู่เย็นเป็นสุข",
-    "มีความสุขกับคนที่คุณรัก",
-
-    // โชคลาภ
-    "โชคดีมีชัย รวยเงินรวยทอง",
-    "เฮงๆ รวยๆ ตลอดปี 2025",
-    "มีโชคลาภ เงินทองไหลมาเทมา",
-    "ขอให้ร่ำรวย มีเงินทองใช้ไม่ขาดมือ",
-    "โชคดี มีชัย ร่ำรวยเงินทอง",
-
-    // สุขภาพ
-    "สุขภาพแข็งแรง ปราศจากโรคภัย",
-    "ขอให้สุขภาพดี ไม่มีโรคภัยมาเบียดเบียน",
-    "แข็งแรงทั้งกายและใจ",
-    "มีสุขภาพที่ดีตลอดทั้งปี",
-    "สุขภาพแข็งแรง อายุยืนยาว",
-
-    // ความสำเร็จ
-    "สมหวังในทุกสิ่งที่ปรารถนา",
-    "ขอให้สมหวังในทุกการตัดสินใจ",
-    "ประสบความสำเร็จในทุกเป้าหมาย",
-    "ทำอะไรก็สำเร็จสมความปรารถนา",
-    "บรรลุเป้าหมายในทุกด้าน",
-
-    // จิตใจและความสุข
-    "มีความสุขกาย สบายใจ",
-    "จิตใจสงบ มีความสุขตลอดปี",
-    "มีรอยยิ้มและเสียงหัวเราะเสมอ",
-    "มีความสุขในทุกๆ วัน",
-    "จิตใจแจ่มใส มีความสุขตลอดไป",
-
-    // การเรียน
-    "เรียนเก่ง ประสบความสำเร็จ",
-    "มีสติปัญญาที่เฉียบแหลม",
-    "การเรียนก้าวหน้า สมหวังดังตั้งใจ",
-    "เรียนจบตามที่ตั้งใจ",
-    "ขอให้เรียนสำเร็จดังที่ตั้งใจ",
-
-    // ความก้าวหน้า
-    "ก้าวหน้าในทุกด้านของชีวิต",
-    "พัฒนาตนเองอย่างต่อเนื่อง",
-    "ประสบความสำเร็จในทุกก้าวย่าง",
-    "มีความก้าวหน้าในทุกมิติของชีวิต",
-    "เจริญรุ่งเรืองในทุกๆ ด้าน",
-
-    // พลังใจ
-    "มีกำลังใจที่เข้มแข็งตลอดไป",
-    "มีพลังใจที่เข้มแข็งในการต่อสู้กับทุกอุปสรรค",
-    "มีกำลังใจที่ดีในการทำทุกสิ่ง",
-    "จิตใจเข้มแข็ง พร้อมรับมือทุกสถานการณ์",
-    "มีพลังใจที่เข้มแข็งตลอดไป",
-  ], []);
-  // ฟังก์ชันสุ่มคำอวยพร
+  // ย้าย getRandomWishes มาไว้ก่อนการใช้งาน
   const getRandomWishes = useCallback(() => {
-    const availableWishes = [...allWishes];
+    const availableWishes = [...WISHES_LIST];
     const selectedWishes: string[] = [];
     while (selectedWishes.length < 4) {
       const randomIndex = Math.floor(Math.random() * availableWishes.length);
@@ -105,18 +104,15 @@ const NewYearCard = () => {
       availableWishes.splice(randomIndex, 1);
     }
     return selectedWishes;
-  }, [allWishes]);
+  }, []);
 
-  // Update View Count in Firebase
+  // Firebase update function
   const updateViewCount = useCallback(async () => {
     try {
       const viewsRef = ref(database, "cardViews");
       const snapshot = await get(viewsRef);
       const currentViews = snapshot.exists() ? snapshot.val() : 0;
-
-      console.log("Current views before update:", currentViews);
       await set(viewsRef, currentViews + 1);
-      console.log("Views updated successfully");
     } catch (error) {
       console.error("Error updating view count:", error);
     }
@@ -124,11 +120,16 @@ const NewYearCard = () => {
 
   // Effects
   useEffect(() => {
-    if (typeof navigator !== "undefined" && "share" in navigator) {
-      setShareSupported(true);  // ใช้งาน setShareSupported ที่นี่
-    }
+    const checkShareSupport = () => {
+      if (typeof navigator !== "undefined" && "share" in navigator) {
+        setShareSupported(true);
+      } else {
+        setShareSupported(false);
+      }
+    };
+    checkShareSupport();
   }, []);
-  // Update View Count When Card Opens
+
   useEffect(() => {
     if (isOpen && !sessionStorage.getItem("viewUpdated")) {
       updateViewCount().then(() => {
@@ -137,7 +138,6 @@ const NewYearCard = () => {
     }
   }, [isOpen, updateViewCount]);
 
-  // Listen to Firebase View Count Changes
   useEffect(() => {
     const viewsRef = ref(database, "cardViews");
     const unsubscribe = onValue(
@@ -145,17 +145,14 @@ const NewYearCard = () => {
       (snapshot) => {
         const views = snapshot.exists() ? snapshot.val() : 0;
         setViewCount(views);
-        console.log("Current views from Firebase:", views);
       },
       (error) => {
         console.error("Error reading view count:", error);
       }
     );
-
     return () => unsubscribe();
   }, []);
 
-  // Generate Wishes and Play Audio When Card Opens
   useEffect(() => {
     if (isOpen && !hasGeneratedWishes) {
       const timer = setTimeout(() => {
@@ -163,15 +160,11 @@ const NewYearCard = () => {
         setShowMessage(true);
         setHasGeneratedWishes(true);
 
-        audioRef.current
-          ?.play()
-          .then(() => console.log("Audio is playing"))
-          .catch((error) => {
-            console.error("Audio play failed:", error);
-            document.addEventListener("click", () => audioRef.current?.play(), {
-              once: true,
-            });
+        audioRef.current?.play().catch(() => {
+          document.addEventListener("click", () => audioRef.current?.play(), {
+            once: true,
           });
+        });
       }, 1000);
 
       return () => clearTimeout(timer);
@@ -183,13 +176,14 @@ const NewYearCard = () => {
       }
     }
   }, [isOpen, hasGeneratedWishes, getRandomWishes]);
-  // ฟังก์ชันปิดการ์ด
+
+  // Event handlers
   const handleClose = () => {
     setIsOpen(false);
     setShowMessage(false);
+    setHasGeneratedWishes(false); // เพิ่มบรรทัดนี้เพื่อ reset state
   };
 
-  // ฟังก์ชันแชร์การ์ด
   const handleShare = async () => {
     try {
       if (typeof navigator !== "undefined" && "share" in navigator) {
@@ -200,7 +194,7 @@ const NewYearCard = () => {
         });
       }
     } catch (error) {
-      console.log("Error sharing:", error);
+      console.error("Error sharing:", error);
     }
   };
 
